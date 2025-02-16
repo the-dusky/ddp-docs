@@ -6,14 +6,20 @@ const config = defineConfig({
   cacheDir: '.vitepress/.cache',
   outDir: '.vitepress/dist',
   buildDir: '.vitepress/.temp',
-  title: "Meme-App Factory",
-  description: "AI-Driven Brand Creation and Management Platform",
+  title: "DDP",
+  description: "Decentralized Digital Presence - AI-Driven Brand Creation and Management Platform",
   base: '/',
   lastUpdated: true,
   cleanUrls: true,
   head: [
-    ['link', { rel: 'stylesheet', href: '/css/styles.css' }]
+    ['link', { rel: 'stylesheet', href: '/css/styles.css' }],
+    ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
+
+  // Search
+  search: {
+    provider: 'local'
+  },
 
   mermaid: { // @ts-ignore -- Mermaid config using plain JS as per team guidelines
     theme: 'default',
@@ -33,44 +39,63 @@ const config = defineConfig({
 
   themeConfig: {
     logo: '/images/logo.png',
+    
+    // Social links
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/the-dusky/ddp-web3' }
+    ],
+
+    // Footer
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2024-present DDP'
+    },
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Platform', link: '/platform/' },
-      { text: 'Technology', link: '/technology/' },
-      { text: 'Business', link: '/business/' }
+      { text: 'About', link: '/about/' },
+      { text: 'Contracts', link: '/contracts/' },
+      { text: 'DARYL', link: '/daryl/' }
     ],
     sidebar: {
-      '/': [
+      '/about/': [
         {
-          text: 'Overview',
+          text: 'About DDP',
           items: [
-            { text: 'Introduction', link: '/' },
-            { text: 'Vision & Mission', link: '/vision' },
-            { text: 'Market Opportunity', link: '/market' }
-          ]
-        },
-        {
-          text: 'Platform',
-          items: [
-            { text: 'Features', link: '/platform/features' },
-            { text: 'Use Cases', link: '/platform/use-cases' },
-            { text: 'Benefits', link: '/platform/benefits' }
+            { text: 'Introduction', link: '/about/' },
+            { text: 'Vision & Mission', link: '/about/vision' },
+            { text: 'Market Opportunity', link: '/about/market' }
           ]
         },
         {
           text: 'Technology',
           items: [
-            { text: 'Architecture', link: '/technology/architecture' },
-            { text: 'AI Systems', link: '/technology/ai-systems' },
-            { text: 'Security', link: '/technology/security' }
+            { text: 'Overview', link: '/about/technology/' },
+            { text: 'Architecture', link: '/about/technology/architecture' },
+            { text: 'Security', link: '/about/technology/security' }
+          ]
+        }
+      ],
+      '/contracts/': [
+        {
+          text: 'Smart Contracts',
+          items: [
+            { text: 'Overview', link: '/contracts/' },
+            { text: 'Architecture', link: '/contracts/architecture' }
           ]
         },
         {
-          text: 'Business',
+          text: 'Solana',
           items: [
-            { text: 'Model', link: '/business/model' },
-            { text: 'Token Economics', link: '/business/tokenomics' },
-            { text: 'Roadmap', link: '/business/roadmap' }
+            { text: 'Overview', link: '/contracts/solana/' }
+          ]
+        }
+      ],
+      '/daryl/': [
+        {
+          text: 'DARYL AI System',
+          items: [
+            { text: 'Overview', link: '/daryl/' },
+            { text: 'Components', link: '/daryl/components' },
+            { text: 'Integration', link: '/daryl/integration' }
           ]
         }
       ]
