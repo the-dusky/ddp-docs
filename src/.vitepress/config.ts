@@ -3,9 +3,9 @@ import { withMermaid } from 'vitepress-plugin-mermaid'
 import type { DefaultTheme, UserConfig } from 'vitepress'
 
 const config = defineConfig({
-  cacheDir: '.vitepress/.cache',
-  outDir: '.vitepress/dist',
-  buildDir: '.vitepress/.temp',
+  srcDir: './src',
+  cacheDir: './.vitepress/.cache',
+  outDir: './.vitepress/dist',
   title: "DDP",
   description: "Decentralized Digital Presence - AI-Driven Brand Creation and Management Platform",
   base: '/',
@@ -15,11 +15,6 @@ const config = defineConfig({
     ['link', { rel: 'stylesheet', href: '/css/styles.css' }],
     ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
-
-  // Search
-  search: {
-    provider: 'local'
-  },
 
   mermaid: { // @ts-ignore -- Mermaid config using plain JS as per team guidelines
     theme: 'default',
@@ -38,6 +33,10 @@ const config = defineConfig({
   },
 
   themeConfig: {
+    // Search
+    search: {
+      provider: 'local'
+    },
     logo: '/images/logo.png',
     
     // Social links
@@ -48,7 +47,7 @@ const config = defineConfig({
     // Footer
     footer: {
       message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2024-present DDP'
+      copyright: 'Copyright 2024-present DDP'
     },
     nav: [
       { text: 'About', link: '/about/' },
