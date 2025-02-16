@@ -68,7 +68,7 @@ const config = defineConfig({
         {
           text: 'Technology',
           items: [
-            { text: 'Overview', link: '/about/technology/' },
+            { text: 'Overview', link: '/about/technology/system-overview' },
             { text: 'Architecture', link: '/about/technology/architecture' },
             { text: 'Security', link: '/about/technology/security' }
           ]
@@ -96,6 +96,12 @@ const config = defineConfig({
             { text: 'Overview', link: '/daryl/' },
             { text: 'Components', link: '/daryl/components' },
             { text: 'Integration', link: '/daryl/integration' }
+          ]
+        },
+        {
+          text: 'Diagrams',
+          items: [
+            { text: 'Technical Architecture', link: '/daryl/diagrams/technical-architecture' }
           ]
         }
       ]

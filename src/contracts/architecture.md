@@ -2,48 +2,54 @@
 
 ## Contract Files and Components
 
+<FullscreenDiagram>
+
 ```mermaid
 graph TB
-    subgraph Contracts
-        subgraph Core Contracts
-            DDPToken[DDPToken.sol<br/>Non-upgradeable ERC-1155<br/>- Core token operations<br/>- Immutable]
-            DDPBrand[DDPBrand.sol<br/>Cloneable ERC-1155<br/>- Simple token operations<br/>- Controlled by business]
-            DDPBusiness[DDPBusiness.sol<br/>Non-upgradeable<br/>- Brand management<br/>- Token operations<br/>- Swappable]
-            DDPFactory[DDPFactory.sol<br/>Upgradeable UUPS<br/>- Brand deployment<br/>- Cross-chain compatibility]
-        end
+    subgraph Core System
+        FactoryImpl[1155 Factory Implementation<br/>UUPS + Ownable]-->|upgrades|FactoryProxy[1155 Factory Proxy];
+        FactoryProxy-->|delegates|FactoryImpl;
+    end
 
-        subgraph Interfaces
-            IDDPToken[IDDPToken.sol]
-            IDDPBusiness[IDDPBusiness.sol]
-            IDDPBrand[IDDPBrand.sol]
+    subgraph Brand Creation
+        Template[1155 Template Contract]-->|blueprint for|BrandImpl[Brand Implementation];
+        FactoryProxy-->|creates|BrandImpl;
+        BusinessLogic[Business Logic Contract]-->|configures|BrandImpl;
+        BrandImpl-->|initializes with|FirstToken[First Token];
+    end
+
+    subgraph Brand Contracts
+        BrandImpl-->|configured becomes|Brand1[Brand Instance 1];
+        BrandImpl-->|configured becomes|Brand2[Brand Instance 2];
+        BrandImpl-->|configured becomes|Brand3[Brand Instance 3];
+
+        subgraph Brand Features
+            Brand1-->CoreFeatures1[Core Features<br/>Mint, Transfer, etc];
+            Brand1-->BusinessLogic1[Business Logic<br/>Delegation];
+            Brand1-->GovernanceLogic1[Governance Logic<br/>Delegation];
+            Brand1-->State1[Token State];
+
+            BusinessLogic1-->BusinessContract[Business Logic Contract];
+            GovernanceLogic1-->GovernanceContract[Governance Contract];
+
+            subgraph Token State
+                State1-->TokenTypes1[Token Types];
+            end
         end
     end
 
-    subgraph Deployment Scripts
-        Token[001_deploy_token.ts<br/>- Deploy token<br/>- Set owner]
-        Brand[002_deploy_brand.ts<br/>- Deploy implementation<br/>- No initialization]
-        Business[003_deploy_business.ts<br/>- Deploy business<br/>- Link token]
-        Factory[004_deploy_factory.ts<br/>- Deploy with proxy<br/>- Two-step initialization]
-    end
+    classDef core fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef brand fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef feature fill:#dfd,stroke:#333,stroke-width:1px;
+    classDef contract fill:#fdd,stroke:#333,stroke-width:1px;
 
-    %% Contract Dependencies
-    DDPToken --> IDDPToken
-    DDPBusiness --> IDDPBusiness
-    DDPBrand --> IDDPBrand
-    DDPFactory --> DDPBrand
-    DDPFactory --> DDPBusiness
-    DDPFactory --> DDPToken
-
-    %% Deployment Dependencies
-    Token --> DDPToken
-    Brand --> DDPBrand
-    Business --> DDPBusiness
-    Business --> Token
-    Factory --> Brand
-    Factory --> Business
-    Factory --> Token
-
+    class ProxyAdmin,FactoryImpl,FactoryProxy,Template core;
+    class Brand1,Brand2,Brand3 brand;
+    class CoreFeatures1,BusinessLogic1,GovernanceLogic1,State1 feature;
+    class BusinessContract,GovernanceContract contract;
 ```
+
+</FullscreenDiagram>
 
 ## Operational Flow
 
@@ -109,29 +115,40 @@ graph LR
     class Brand1,Brand2,Brand3 brand
 ```
 
-## Key Features
+## Core Components
 
-### Brand Creation
-- Factory creates deterministic brand addresses
-- Business handles brand setup and token minting
-- Brands are simple ERC-1155 contracts
+### Factory System
+- UUPS upgradeable pattern for standard security
+- Managed through OpenZeppelin's OwnableUpgradeable
+- Creates and initializes new brand instances
+- Ensures deterministic addresses across chains
 
-### Token Operations
-- All token operations go through business contract
-- Business contract can be swapped for new logic
-- Token ownership is immutable
+### Brand Template
+- Base ERC-1155 implementation
+- Core features (minting, transfer, etc)
+- Extension points for business and governance logic
+- Standardized token state management
 
-### Cross-Chain Compatibility
-- Same brand = same address on all chains
-- Uses CREATE2 for deterministic addresses
-- Factory handles cross-chain coordination
+### Business Logic
+- Delegated business operations
+- Swappable implementation for flexibility
+- Handles brand-specific rules and operations
+- Can be upgraded independently
 
-### Upgrade Paths
-- Factory is upgradeable for deployment changes
-- Business logic is swappable for new features
-- Brand contracts are simple and stable
+### Governance Logic
+- Delegated governance operations
+- Configurable voting and proposal systems
+- Manages brand-level decisions
+- Can be upgraded independently
+
+### Token State
+- Structured token type management
+- Support for multiple token categories
+- Agent-created branding tokens
+- Flexible token metadata
 
 ### Security Model
-- Core token functionality is immutable
-- Brand operations controlled by business
-- Factory upgrades controlled by owner
+- Proxy admin controls factory upgrades
+- Business and governance logic are swappable
+- Core features remain immutable
+- Clear separation of concerns

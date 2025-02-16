@@ -1,11 +1,13 @@
 <template>
   <div class="contract-diagram">
-    <slot></slot>
+    <FullscreenDiagram>
+      <slot></slot>
+    </FullscreenDiagram>
   </div>
 </template>
 
 <script setup lang="ts">
-// Component logic will go here
+import FullscreenDiagram from './FullscreenDiagram.vue'
 </script>
 
 <style scoped>
