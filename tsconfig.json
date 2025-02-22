@@ -14,6 +14,6 @@
     "skipLibCheck": true,
     "types": ["vitepress/client", "node"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/.vitepress/**/*.ts", "src/.vitepress/**/*.vue"],
   "exclude": ["node_modules", "dist"]
 }

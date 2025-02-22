@@ -3,16 +3,14 @@ import { withMermaid } from 'vitepress-plugin-mermaid'
 import type { DefaultTheme, UserConfig } from 'vitepress'
 
 const config = defineConfig({
-  srcDir: './src',
-  cacheDir: './.vitepress/.cache',
-  outDir: './.vitepress/dist',
+  cacheDir: '.vitepress/.cache',
+  outDir: '.vitepress/dist',
   title: "DDP",
   description: "Decentralized Digital Presence - AI-Driven Brand Creation and Management Platform",
   base: '/',
   lastUpdated: true,
   cleanUrls: true,
   head: [
-    ['link', { rel: 'stylesheet', href: '/css/styles.css' }],
     ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
 
@@ -78,6 +76,7 @@ const config = defineConfig({
           text: 'Smart Contracts',
           items: [
             { text: 'Overview', link: '/contracts/' },
+            { text: 'Latest', link: '/contracts/latest-architecture' },
             { text: 'Architecture', link: '/contracts/architecture' }
           ]
         },
@@ -94,7 +93,8 @@ const config = defineConfig({
           items: [
             { text: 'Overview', link: '/daryl/' },
             { text: 'Components', link: '/daryl/components' },
-            { text: 'Integration', link: '/daryl/integration' }
+            { text: 'Integration', link: '/daryl/integration' },
+            { text: 'Eliza Framework', link: '/daryl/eliza' }
           ]
         },
         {

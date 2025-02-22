@@ -1,7 +1,7 @@
 import DefaultTheme from 'vitepress/theme'
+import type { Theme } from 'vitepress'
 import ContractDiagram from '../components/ContractDiagram.vue'
 import FullscreenDiagram from '../components/FullscreenDiagram.vue'
-import { type Theme } from 'vitepress'
 
 export default {
   extends: DefaultTheme,

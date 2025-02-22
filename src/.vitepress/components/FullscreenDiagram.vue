@@ -15,11 +15,8 @@
     <Teleport to="body">
       <div v-if="isExpanded" class="modal-overlay" @click.self="toggleExpand">
         <div class="modal-content">
-          <div class="expanded-diagram" 
-               ref="expandedDiagramRef"
-               @wheel.prevent="handleWheel"
-               :style="{ transform: `scale(${zoom})` }">
-            <slot></slot>
+          <div class="expanded-diagram">
+            <div ref="expandedDiagramRef" v-html="diagramHTML"></div>
           </div>
           <div class="zoom-controls">
             <button @click="zoomOut" :disabled="zoom <= 0.5" title="Zoom Out">
@@ -51,48 +48,115 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
+import panzoom from 'panzoom'
 
 const isExpanded = ref(false)
 const diagramRef = ref(null)
 const expandedDiagramRef = ref(null)
 const zoom = ref(1)
+/**
+ * Handles interactive pan and zoom functionality for the expanded diagram.
+ * Uses panzoom library to provide smooth zooming and bounded panning.
+ * - Zoom range: 50% to 300%
+ * - Bounds: diagram can't be panned outside visible area
+ * - Smooth transitions for zoom operations
+ */
+const panzoomInstance = ref(null)
+const diagramHTML = ref('')
 
+/**
+ * Clones the original diagram content for use in the expanded view.
+ * This preserves the original diagram state while allowing independent
+ * manipulation in the expanded view.
+ */
+const cloneDiagram = () => {
+  if (!diagramRef.value) return
+  try {
+    // Clone the rendered SVG directly
+    diagramHTML.value = diagramRef.value.innerHTML
+  } catch (error) {
+    console.error('Failed to clone diagram:', error)
+    diagramHTML.value = ''
+  }
+}
+
+/**
+ * Toggles the expanded view state and manages panzoom initialization/cleanup.
+ * - Initializes panzoom when expanding
+ * - Cleans up panzoom instance when closing
+ * - Manages body scroll lock
+ * - Resets zoom state on close
+ */
 const toggleExpand = () => {
+  if (!isExpanded.value) {
+    cloneDiagram()
+  }
   isExpanded.value = !isExpanded.value
   if (isExpanded.value) {
     document.body.style.overflow = 'hidden'
+    // Initialize panzoom after diagram is mounted
+    nextTick(() => {
+      if (expandedDiagramRef.value) {
+        panzoomInstance.value = panzoom(expandedDiagramRef.value.firstChild, {
+          bounds: true,
+          boundsPadding: 0.1,
+          minZoom: 0.5,
+          maxZoom: 3
+        })
+      }
+    })
   } else {
     document.body.style.overflow = ''
+    if (panzoomInstance.value) {
+      panzoomInstance.value.dispose()
+      panzoomInstance.value = null
+    }
     resetZoom()
   }
 }
 
+/**
+ * Smoothly zooms in the diagram by 10%
+ * Uses panzoom's smoothZoom for fluid animation
+ * Respects maxZoom boundary of 300%
+ */
 const zoomIn = () => {
-  if (zoom.value < 3) {
-    zoom.value = Math.min(3, zoom.value + 0.1)
-  }
-}
-
-const zoomOut = () => {
-  if (zoom.value > 0.5) {
-    zoom.value = Math.max(0.5, zoom.value - 0.1)
-  }
-}
-
-const resetZoom = () => {
-  zoom.value = 1
-}
-
-const handleWheel = (e) => {
-  if (e.ctrlKey || e.metaKey) {
-    if (e.deltaY < 0) {
-      zoomIn()
-    } else {
-      zoomOut()
+  if (panzoomInstance.value) {
+    const currentZoom = panzoomInstance.value.getTransform().scale
+    if (currentZoom < 3) {
+      panzoomInstance.value.smoothZoom(0, 0, 1.1)
     }
   }
 }
+
+/**
+ * Smoothly zooms out the diagram by 10%
+ * Uses panzoom's smoothZoom for fluid animation
+ * Respects minZoom boundary of 50%
+ */
+const zoomOut = () => {
+  if (panzoomInstance.value) {
+    const currentZoom = panzoomInstance.value.getTransform().scale
+    if (currentZoom > 0.5) {
+      panzoomInstance.value.smoothZoom(0, 0, 0.9)
+    }
+  }
+}
+
+/**
+ * Resets the diagram to its initial state
+ * - Sets zoom level to 100%
+ * - Centers the diagram in the viewport
+ */
+const resetZoom = () => {
+  if (panzoomInstance.value) {
+    panzoomInstance.value.zoomAbs(0, 0, 1)
+    panzoomInstance.value.moveTo(0, 0)
+  }
+}
+
+
 
 // Reset zoom when closing
 watch(isExpanded, (newValue) => {
@@ -155,22 +219,24 @@ watch(isExpanded, (newValue) => {
   width: 95vw;
   height: 95vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
 }
 
 .expanded-diagram {
-  width: 100%;
-  height: 100%;
+  flex: 1;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  transition: transform 0.2s ease;
-  transform-origin: center center;
+  background: white;
+}
+
+.expanded-diagram > div {
+  cursor: move;
 }
 
 .expanded-diagram :deep(svg) {
+  display: block;
   width: auto;
   height: auto;
   min-width: 1000px;

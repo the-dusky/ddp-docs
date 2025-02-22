@@ -1,5 +1,5 @@
 {
-  "name": "@ddp/docs",
+  "name": "@webe3/docs",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -10,11 +10,14 @@
     "docs:preview": "vitepress preview src"
   },
   "devDependencies": {
-    "vitepress": "2.0.0-alpha.2",
-    "vue": "^3.4.15",
-    "vitepress-plugin-mermaid": "^2.0.17",
-    "mermaid": "^11.4.1",
     "@types/node": "^22.10.7",
-    "typescript": "^5.3.3"
+    "mermaid": "^11.4.1",
+    "typescript": "^5.3.3",
+    "vitepress": "2.0.0-alpha.2",
+    "vitepress-plugin-mermaid": "^2.0.17",
+    "vue": "^3.4.15"
+  },
+  "dependencies": {
+    "panzoom": "^9.4.3"
   }
 }
